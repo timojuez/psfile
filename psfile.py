@@ -29,7 +29,13 @@ Exported classes:
     PSFile - Stand-alone PostScript files
 """
 
-import time, StringIO
+import time
+try:
+    import StringIO
+except ImportError:
+    import io as StringIO
+try: basestring
+except NameError: basestring = str
 
 __version__ = '0.9'
 __all__ = [ 'EPSFile', 'PSFile', 'paper_sizes' ]
@@ -77,9 +83,9 @@ class PSBase(object):
         padding_bottom = padding_bottom if padding_bottom is not None else padding
         padding_left = padding_left if padding_left is not None else padding
 
-        if self.xbase < margin_left:
+        if self.xbase is None or self.xbase < margin_left:
             self.xbase = margin_left
-        if self.ybase < margin_bottom:
+        if self.ybase is None or self.ybase < margin_bottom:
             self.ybase = margin_bottom
         if self.width is None:
             self.width = paper_width - margin_left - margin_right
@@ -320,7 +326,7 @@ class PSFile(PSBase):
 
         w = self.paper_width
         h = self.paper_height
-        for name, dim in paper_sizes.iteritems():
+        for name, dim in paper_sizes.items():
             if dim == (w,h):
                 paper = name
                 orientation = "Portrait"
